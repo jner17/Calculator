@@ -1,8 +1,9 @@
 import re
 
+# Sample equation: ((4^2+1)*6)/(1-6^(3-2)/125^^3+10-6+4/2+2*2+2*2/2)*(((((2.0/4^3/6+1-2^1.0/56)*5)-1)^1.2)/6.7)
 
-# todo: consider adding ability to perform operations on previous answer
-def main():
+
+def run():
     # Print possible commands and examples
     print('Examples of possible operations')
     print('-' * 31)
@@ -14,9 +15,11 @@ def main():
     print('Square Root\t\t: 2^^2')
     print('Cube Root\t\t: 2^^3')
     print('Nth Root\t\t: 2^^N')
+    print('Previous Value\t: _ (underscore, e.g. _/5)')
     print('Quit\t\t\t: q\n')
 
     user_input = ''
+    old_value = None
     while user_input not in ['q', 'quit', 'exit', 'close', 'end']:
 
         # User is given prompt to enter formula
@@ -28,6 +31,14 @@ def main():
         # Identify the type of operation and calculate the solution
         solution = ''
 
+        # Add in previous value if needed
+        if '_' in user_input:
+            if old_value is None:
+                print('There is no previous value')
+                continue
+            else:
+                user_input = user_input.replace('_', str(old_value))
+
         # Check if the user requested to quit
         if user_input in ['q', 'quit', 'exit', 'close', 'end']:
             print('Quitting...')
@@ -35,7 +46,6 @@ def main():
             # Otherwise begin processing equation
             solved = False
             equation = user_input
-            # equation = '((4^2+1)*6)/(1-6^(3-2)/125^^3+10-6+4/2+2*2+2*2/2)*(((((2.0/4^3/6+1-2^1.0/56)*5)-1)^1.2)/6.7)'
             while not solved:
 
                 # Search for and remove serperfullis parenthesis, e.g. (4.0) -> 4.0
@@ -46,7 +56,7 @@ def main():
                     equation = equation[: i1] + equation[i1 + 1: i2 - 1] + equation[i2:]
                     continue
 
-                # Search for simple operations within parenthesis, e.g. (3/4), (3-4)
+                # Search for simple operations within parenthesis, e.g. (-3/4), (3-4)
                 result = re.search(r'\((-?[\d.]+)([+x*/-])(-?[\d.])\)', equation)
                 if result is not None:
                     i1, i2 = result.span(0)[:2]
@@ -78,6 +88,7 @@ def main():
                 solved = True
                 solution = equation
 
+        old_value = solution
         print('{:.4f}'.format(float(solution)))
 
 
@@ -88,7 +99,7 @@ def simple_math(equation):
     if 'x' in equation:
         parts = equation.split('x')
         answer = float(parts[0]) * float(parts[1])
-    if '*' in equation:
+    elif '*' in equation:
         parts = equation.split('*')
         answer = float(parts[0]) * float(parts[1])
     elif '/' in equation:
@@ -112,5 +123,5 @@ def simple_math(equation):
     return str(answer)
 
 if __name__ == '__main__':
-    main()
+    run()
     print('Finished')
