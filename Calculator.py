@@ -11,7 +11,7 @@ def run():
     print('Division\t\t: 2/2')
     print('Addition\t\t: 2+2')
     print('Subtraction\t\t: 2-2')
-    print('Exponetial\t\t: 2^2')
+    print('Exponential\t\t: 2^2')
     print('Square Root\t\t: 2^^2')
     print('Cube Root\t\t: 2^^3')
     print('Nth Root\t\t: 2^^N')
@@ -60,14 +60,11 @@ def complex_math(complex_equation: str) -> float:
     Division: 2/2\n
     Addition: 2+2\n
     Subtraction: 2-2\n
-    Exponetial: 2^2\n
+    Exponential: 2^2\n
     Square Root: 2^^2\n
     Cube Root: 2^^3\n
     Nth Root: 2^^N\n
-
-    :param complex_equation: str, e.g. '((4.5-2.3)^2 + 5*6.80) / 10.12'
-    :return: solution
-    :rtype: float
+    e.g. '((4.5-2.3)^2 + 5*6.80) / 10.12' \n
     """
 
     # Otherwise begin processing equation
@@ -75,7 +72,7 @@ def complex_math(complex_equation: str) -> float:
     equation = complex_equation
     while not solved:
 
-        # Search for and remove serperfullis parenthesis, e.g. (4.0) -> 4.0
+        # Search for and remove superfluous parenthesis, e.g. (4.0) -> 4.0
         result = re.search(r'\(-?[\d.]+\)', equation)
         if result is not None:
             i1, i2 = result.span(0)[:2]
@@ -117,8 +114,21 @@ def complex_math(complex_equation: str) -> float:
         return solution
 
 
-def simple_math(equation):
+def simple_math(equation: str) -> str:
     # todo: add docstrings
+    """
+    Take a single operation equation and computes the answer. \n
+    **Examples of Possible Operations**\n
+    **====================**\n
+    Multiplication: 2x2\n
+    Division: 2/2\n
+    Addition: 2+2\n
+    Subtraction: 2-2\n
+    Exponential: 2^2\n
+    Square Root: 2^^2\n
+    Cube Root: 2^^3\n
+    Nth Root: 2^^N\n
+    """
 
     # Identify the type of operation and calculate the solution
     answer = ''
