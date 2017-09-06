@@ -24,6 +24,8 @@ def run():
 
         # User is given prompt to enter formula
         user_input = input('Enter an equation: ')
+        if user_input == '':
+            continue
 
         # Remove whitespace
         user_input = user_input.replace(' ', '')
@@ -43,56 +45,80 @@ def run():
         if user_input in ['q', 'quit', 'exit', 'close', 'end']:
             print('Quitting...')
         else:
-            # Otherwise begin processing equation
-            solved = False
-            equation = user_input
-            while not solved:
-
-                # Search for and remove serperfullis parenthesis, e.g. (4.0) -> 4.0
-                result = re.search(r'\(-?[\d.]+\)', equation)
-                if result is not None:
-                    i1, i2 = result.span(0)[:2]
-                    # sub_str = re.sub(r'[()]', '', equation[i1: i2])
-                    equation = equation[: i1] + equation[i1 + 1: i2 - 1] + equation[i2:]
-                    continue
-
-                # Search for simple operations within parenthesis, e.g. (-3/4), (3-4)
-                result = re.search(r'\((-?[\d.]+)([+x*/-])(-?[\d.])\)', equation)
-                if result is not None:
-                    i1, i2 = result.span(0)[:2]
-                    equation = equation[: i1] + simple_math(equation[i1 + 1: i2 - 1]) + equation[i2:]
-                    continue
-
-                # Search for exponent operations, e.g. 2^2, 27^^3
-                result = re.search(r'-?[\d.]+([\^]|\^\^)-?[\d.]+', equation)
-                if result is not None:
-                    i1, i2 = result.span(0)[:2]
-                    equation = equation[: i1] + simple_math(equation[i1: i2]) + equation[i2:]
-                    continue
-
-                # Search for multiplication and division operations, e.g. 2x2, 2/3
-                result = re.search(r'(-?[\d.]+)([/*x])(-?[\d.]+(?!\^))', equation)
-                if result is not None:
-                    i1, i2 = result.span(0)[:2]
-                    equation = equation[: i1] + simple_math(equation[i1: i2]) + equation[i2:]
-                    continue
-
-                # Search for addition and subtraction operations, e.g. 2-1, -4+5
-                result = re.search(r'(-?[\d.]+)([+-])(-?[\d.]+(?![*x/^]))', equation)
-                if result is not None:
-                    i1, i2 = result.span(0)[:2]
-                    equation = equation[: i1] + simple_math(equation[i1: i2]) + equation[i2:]
-                    continue
-
-                # If there are no more operations break from loop
-                solved = True
-                solution = equation
+            solution = complex_math(user_input)
 
         old_value = solution
         print('{:.4f}'.format(float(solution)))
 
 
+def complex_math(complex_equation: str) -> float:
+    """
+    Takes a chained and or hierarchical equation and computes the answer.\n
+    **Examples of Possible Operations**\n
+    **====================**\n
+    Multiplication: 2x2\n
+    Division: 2/2\n
+    Addition: 2+2\n
+    Subtraction: 2-2\n
+    Exponetial: 2^2\n
+    Square Root: 2^^2\n
+    Cube Root: 2^^3\n
+    Nth Root: 2^^N\n
+
+    :param complex_equation: str, e.g. '((4.5-2.3)^2 + 5*6.80) / 10.12'
+    :return: solution
+    :rtype: float
+    """
+
+    # Otherwise begin processing equation
+    solved = False
+    equation = complex_equation
+    while not solved:
+
+        # Search for and remove serperfullis parenthesis, e.g. (4.0) -> 4.0
+        result = re.search(r'\(-?[\d.]+\)', equation)
+        if result is not None:
+            i1, i2 = result.span(0)[:2]
+            # sub_str = re.sub(r'[()]', '', equation[i1: i2])
+            equation = equation[: i1] + equation[i1 + 1: i2 - 1] + equation[i2:]
+            continue
+
+        # Search for simple operations within parenthesis, e.g. (-3/4), (3-4)
+        result = re.search(r'\((-?[\d.]+)([+x*/-])(-?[\d.])\)', equation)
+        if result is not None:
+            i1, i2 = result.span(0)[:2]
+            equation = equation[: i1] + simple_math(equation[i1 + 1: i2 - 1]) + equation[i2:]
+            continue
+
+        # Search for exponent operations, e.g. 2^2, 27^^3
+        result = re.search(r'-?[\d.]+([\^]|\^\^)-?[\d.]+', equation)
+        if result is not None:
+            i1, i2 = result.span(0)[:2]
+            equation = equation[: i1] + simple_math(equation[i1: i2]) + equation[i2:]
+            continue
+
+        # Search for multiplication and division operations, e.g. 2x2, 2/3
+        result = re.search(r'(-?[\d.]+)([/*x])(-?[\d.]+(?!\^))', equation)
+        if result is not None:
+            i1, i2 = result.span(0)[:2]
+            equation = equation[: i1] + simple_math(equation[i1: i2]) + equation[i2:]
+            continue
+
+        # Search for addition and subtraction operations, e.g. 2-1, -4+5
+        result = re.search(r'(-?[\d.]+)([+-])(-?[\d.]+(?![*x/^]))', equation)
+        if result is not None:
+            i1, i2 = result.span(0)[:2]
+            equation = equation[: i1] + simple_math(equation[i1: i2]) + equation[i2:]
+            continue
+
+        # If there are no more operations break from loop
+        solved = True
+        solution = float(equation)
+        return solution
+
+
 def simple_math(equation):
+    # todo: add docstrings
 
     # Identify the type of operation and calculate the solution
     answer = ''
